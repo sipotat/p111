@@ -47,15 +47,11 @@ const Button = styled.button`
   background: #ffffff;
   padding: 5px;
   border: 1px solid #494949 !important;
+  border-radius: 5px;
   display: inline-block;
   transition: all 0.4s ease 0s;
   cursor: pointer;
-  &:hover {
-    color: #ffffff !important;
-    background: #f6b93b;
-    border-color: #f6b93b !important;
-    transition: all 0.4s ease 0s;
-  }
+  font-size: 16px;
 `;
 
 function getRandomInt(max) {
