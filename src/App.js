@@ -19,14 +19,18 @@ const Container = styled.div`
   align-items: center;
 `;
 
+const Title = styled.text`
+  font-size: 22px;
+`;
+
 const Text = styled.text`
-  font-size: 14px;
+  font-size: 18px;
   padding-top: 2rem;
 `;
 
 const Card = styled.div`
-  width: 200px;
-  height: 250px;
+  width: 300px;
+  height: 350px;
   border-radius: 4px;
   display: flex;
   justify-content: center;
@@ -91,15 +95,15 @@ function App() {
       <Container>
         <ReactCardFlip
           isFlipped={cardDirection}
-          containerStyle={{ width: "200px" }}
+          containerStyle={{ width: "300px" }}
           flipSpeedBackToFront={cardFlipSpeed}
           flipSpeedFrontToBack={cardFlipSpeed}
         >
           <Card onClick={showBack}>
-            <div>{currVoc[card].en}</div>
+            <Title>{currVoc[card].en}</Title>
           </Card>
           <Card onClick={nextCard}>
-            <div>{!hideResult && currVoc[card].pt}</div>
+            <Title>{!hideResult && currVoc[card].pt}</Title>
           </Card>
         </ReactCardFlip>
         <Text>
