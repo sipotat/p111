@@ -134,8 +134,8 @@ function App() {
           {card + 1} out of {list.length}
         </Text>
         <ButtonsContainer>
-          <Button onClick={handleExclude}>Back</Button>
-          <Button onClick={handleBack} disabled={card === 0}>
+          <Button onClick={handleBack}>Back</Button>
+          <Button onClick={handleExclude} disabled={card === 0}>
             Exclude
           </Button>
         </ButtonsContainer>
