@@ -1,16 +1,16 @@
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
+import { useCookies } from "react-cookie";
 
 import voc from "./vocabulary";
 
 const Page = styled.div`
+  padding-top: 5rem;
   width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #e6e6e6;
 `;
 
 const Container = styled.div`
@@ -40,8 +40,13 @@ const Card = styled.div`
   cursor: pointer;
 `;
 
+const ButtonsContainer = styled.div`
+  display: flex;
+`;
+
 const Button = styled.button`
   margin-top: 1rem;
+  margin-left: 0.5rem;
   color: #494949 !important;
   text-decoration: none;
   background: #ffffff;
@@ -54,13 +59,19 @@ const Button = styled.button`
   font-size: 16px;
 `;
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+function shuffle(array, exclude) {
+  return array
+    .filter((item) => !exclude || !exclude.includes(item.en))
+    .map((a) => ({ sort: Math.random(), value: a }))
+    .sort((a, b) => a.sort - b.sort)
+    .map((a) => a.value);
 }
-
 function App() {
-  const [currVoc, setCurrVoc] = useState(voc.map((x) => x));
-  const [card, setCard] = useState(getRandomInt(voc.length - 1));
+  const [cookies, setCookie, removeCookie] = useCookies(["exclude"]);
+
+  const [list, setList] = useState(shuffle(voc, cookies.exclude));
+  const [card, setCard] = useState(0);
+
   const [cardDirection, setCardDirection] = useState(false);
   const [hideResult, setHideResult] = useState(false);
   const [cardFlipSpeed, SetCardFlipSpeed] = useState(0.6);
@@ -68,23 +79,40 @@ function App() {
   function nextCard() {
     setHideResult(true);
     setCardDirection(!cardDirection);
-    currVoc.splice(card, 1);
-    setCard(getRandomInt(currVoc.length - 1));
+    setCard(card + 1);
     setTimeout(() => setHideResult(false), 1000);
   }
   function showBack() {
     setCardDirection(!cardDirection);
   }
-  function restart() {
+  function handleShuffle(noExcludes = false) {
     setHideResult(true);
     SetCardFlipSpeed(0.1);
-    setCurrVoc(voc.map((x) => x));
-    setCard(getRandomInt(currVoc.length - 1));
+    setList(shuffle(voc, noExcludes ? [] : cookies.exclude));
+    setCard(0);
     setCardDirection(false);
     setTimeout(() => {
       setHideResult(false);
       SetCardFlipSpeed(0.6);
     }, 1000);
+  }
+  function handleBack() {
+    setCard(card - 1);
+  }
+  function handleExclude() {
+    setCookie(
+      "exclude",
+      cookies.exclude ? [...cookies.exclude, list[card].en] : [list[card].en]
+    );
+    setList(list.filter((_, idx) => idx !== card));
+  }
+  function handleReset() {
+    if (
+      window.confirm("This will bring back all the excluded words. Continue?")
+    ) {
+      removeCookie("exclude");
+      handleShuffle(true);
+    }
   }
   return (
     <Page>
@@ -96,16 +124,25 @@ function App() {
           flipSpeedFrontToBack={cardFlipSpeed}
         >
           <Card onClick={showBack}>
-            <Title>{currVoc[card].en}</Title>
+            <Title>{list[card].en}</Title>
           </Card>
           <Card onClick={nextCard}>
-            <Title>{!hideResult && currVoc[card].pt}</Title>
+            <Title>{!hideResult && list[card].pt}</Title>
           </Card>
         </ReactCardFlip>
         <Text>
-          {currVoc.length - 1} out of {voc.length - 1}
+          {card + 1} out of {list.length}
         </Text>
-        <Button onClick={restart}>Restart</Button>
+        <ButtonsContainer>
+          <Button onClick={handleExclude}>Back</Button>
+          <Button onClick={handleBack} disabled={card === 0}>
+            Exclude
+          </Button>
+        </ButtonsContainer>
+        <ButtonsContainer>
+          <Button onClick={() => handleShuffle()}>Reshuffle</Button>
+          <Button onClick={handleReset}>Reset</Button>
+        </ButtonsContainer>
       </Container>
     </Page>
   );

@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "react": "^17.0.1",
     "react-card-flip": "^1.1.0",
+    "react-cookie": "^4.0.3",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.2",
     "styled-components": "^5.2.1",
@@ -19,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "gh-pages -d build"
+    "deploy": "react-scripts build && gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
